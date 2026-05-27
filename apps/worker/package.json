@@ -9,10 +9,11 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@google-cloud/tasks": "^5.4.0",
-    "@ai-visibility/types": "workspace:*",
     "@ai-visibility/db": "workspace:*",
-    "@ai-visibility/policies": "workspace:*"
+    "@ai-visibility/policies": "workspace:*",
+    "@ai-visibility/types": "workspace:*",
+    "@google-cloud/tasks": "^5.4.0",
+    "fastify": "^4.29.1"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",

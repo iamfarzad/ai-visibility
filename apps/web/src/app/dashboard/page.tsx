@@ -31,7 +31,7 @@ export default function DashboardPage() {
           </thead>
           <tbody>
             <tr>
-              <td stle={tdStyle}>farzadbayat.com</td>
+              <td style={tdStyle}>farzadbayat.com</td>
               <td style={tdStyle}><span style={{ color: '#4ade80' }}>✓ Healthy</span></td>
               <td style={tdStyle}><span style={{ color: '#fbbf24' }}>⏳ Pending</span></td>
               <td style={tdStyle}>—</td>

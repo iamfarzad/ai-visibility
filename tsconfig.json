@@ -7,6 +7,12 @@
     "resolveJsonModule": true,
     "declaration": true,
     "declarationMap": true,
-    "sourceMap": true
+    "sourceMap": true,
+    "baseUrl": ".",
+    "paths": {
+      "@ai-visibility/types": ["packages/types/dist/index.js"],
+      "@ai-visibility/db": ["packages/db/dist/index.js"],
+      "@ai-visibility/policies": ["packages/policies/dist/index.js"]
+    }
   }
 }

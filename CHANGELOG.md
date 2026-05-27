@@ -1,15 +1,17 @@
 # Changelog
 
-## 2026-05-28 — Slice 0: Monorepo Scaffold + Database Schema
+## 2026-05-28 — Slice 0: Monorepo Scaffold + Database Schema [COMPLETE]
 - Created repo https://github.com/iamfarzad/ai-visibility
 - Scaffoled monorepo: apps/web, apps/api, apps/worker, packages/{db,types,policies}
 - Turp + pnpm workspaces configured
 - Drizzle ORM with full schema (5 planes, 14 tables)
-- Next.js dashboard bootstrap at apps/web
+- Next.js dashboard bootstrap at apps/web (home, dashboard, findings, handoffs)
 - Fastify API scaffold at apps/api
+- Cloud Tasks worker at apps/worker (idempotent job handlers)
+- SAFE_ACTION_POLICY engine at packages/policies
+- Smoke test: pnpm install → typecheck → build → push → verified on GitHub
 
-## 2026-05-28 — Slice 1: GitHub App Auth + Cloud Tasks
-- Installed GitHub App connector with installation-token lifecycle
+## TODO — Upcoming Slices
 - Cloud Tasks queue provisioned (GCP)
 - Worker handler for at-least-once idempotent job processing
 - Smoke test: job enqueue → execute → ack verified
