@@ -1,0 +1,22 @@
+{
+  "name": "@ai-visibility/api",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "tsx watch src/index.ts",
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "fastify": "^4.28.0",
+    "@ai-visibility/types": "workspace:*",
+    "@ai-visibility/db": "workspace:*",
+    "@ai-visibility/policies": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "tsx": "^4.15.0",
+    "typescript": "^5.4.0"
+  }
+}
