@@ -12,6 +12,7 @@
     "@ai-visibility/db": "workspace:*",
     "@ai-visibility/policies": "workspace:*",
     "@ai-visibility/types": "workspace:*",
+    "@ai-visibility/github-connector": "workspace:*",
     "@google-cloud/tasks": "^5.4.0",
     "fastify": "^4.29.1"
   },
