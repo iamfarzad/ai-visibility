@@ -7,6 +7,8 @@ import fastify from 'fastify';
 import { db, findings, handoffs } from '@ai-visibility/db';
 import { policyEngine } from '@ai-visibility/policies';
 import { ActionMode, FindingStatus } from '@ai-visibility/types';
+import { GSCConnector, normalizeSearchAnalytics, deduplicateFindings } from '@ai-visibility/gsc-connector';
+import type { SearchAnalyticsRow } from '@ai-visibility/gsc-connector';
 
 export interface JobPayload {
   jobType: 'ingest_gsc' | 'ingest_psi' | 'plan_fix' | 'execute_fix' | 'verify_run' | 'prompt_snapshot';
@@ -55,18 +57,74 @@ export async function processJob(payload: JobPayload): Promise<{ success: boolea
   }
 }
 
+// ─── Helpers ─────────────────────────────────────────────────────────────────
+
+function getGSCConnector(): GSCConnector {
+  return new GSCConnector({
+    siteUrl: process.env.GSC_SITE_URL ?? 'sc-domain:farzadbayat.com',
+    credentials: {
+      clientEmail: process.env.GSC_CLIENT_EMAIL ?? '',
+      privateKey: (process.env.GSC_PRIVATE_KEY ?? '').replace(/\\n/g, '\n'),
+    },
+  });
+}
+
+function getDateRange(daysAgo: number): { startDate: string; endDate: string } {
+  const end = new Date();
+  const start = new Date();
+  start.setDate(start.getDate() - daysAgo);
+  return {
+    startDate: start.toISOString().split('T')[0],
+    endDate: end.toISOString().split('T')[0],
+  };
+}
+
 // ─── Handlers ────────────────────────────────────────────────────────────────
 
-async function handleIngestGSC(payload: JobPayload): Promise<{ success: boolean; message: string }> {
-  // TODO (Slice 2): Implement GSC Search Analytics + URL Inspection
-  await db.insert(findings).values({
-    projectId: payload.projectId,
-    source: 'gsc',
-    issueType: 'placeholder_gsc_ingest',
-    severity: 'low',
-    status: FindingStatus.OPEN,
+async function handleIngestGSC(payload: JobPayload): Promise<{ success: boolean; message: string; count?: number }> {
+  const connector = getGSCConnector();
+
+  // Fetch current 30 days
+  const currentRange = getDateRange(30);
+  const rows = await connector.getSearchAnalytics({
+    startDate: currentRange.startDate,
+    endDate: currentRange.endDate,
+    dimensions: ['query', 'page'],
+    rowLimit: 1000,
   });
-  return { success: true, message: 'GSC ingestion placeholder complete' };
+
+  // Fetch prior 30 days for comparison
+  const priorRange = getDateRange(60);
+  const priorRows = await connector.getSearchAnalytics({
+    startDate: priorRange.startDate,
+    endDate: getDateRange(30).startDate, // 60 to 30 days ago
+    dimensions: ['query', 'page'],
+    rowLimit: 1000,
+  });
+
+  // Normalize + deduplicate
+  const rawFindings = normalizeSearchAnalytics(rows, priorRows);
+  const deduped = deduplicateFindings(rawFindings);
+
+  // Insert into DB
+  let inserted = 0;
+  for (const f of deduped) {
+    await db.insert(findings).values({
+      projectId: payload.projectId,
+      source: 'gsc',
+      issueType: f.issueType,
+      severity: f.severity,
+      evidenceJson: f.evidenceJson,
+      status: FindingStatus.OPEN,
+    });
+    inserted++;
+  }
+
+  return {
+    success: true,
+    message: `GSC ingestion complete: ${rows.length} rows → ${rawFindings.length} findings → ${inserted} inserted (deduped)`,
+    count: inserted,
+  };
 }
 
 async function handleIngestPSI(payload: JobPayload): Promise<{ success: boolean; message: string }> {

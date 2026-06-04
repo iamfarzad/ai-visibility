@@ -85,6 +85,9 @@ importers:
       '@ai-visibility/github-connector':
         specifier: workspace:*
         version: link:../../packages/github-connector
+      '@ai-visibility/gsc-connector':
+        specifier: workspace:*
+        version: link:../../packages/gsc-connector
       '@ai-visibility/policies':
         specifier: workspace:*
         version: link:../../packages/policies
@@ -135,6 +138,19 @@ importers:
       '@octokit/rest':
         specifier: ^21.1.1
         version: 21.1.1
+    devDependencies:
+      '@types/node':
+        specifier: ^20.0.0
+        version: 20.19.41
+      typescript:
+        specifier: ^5.4.0
+        version: 5.9.3
+
+  packages/gsc-connector:
+    dependencies:
+      '@ai-visibility/types':
+        specifier: workspace:*
+        version: link:../types
     devDependencies:
       '@types/node':
         specifier: ^20.0.0

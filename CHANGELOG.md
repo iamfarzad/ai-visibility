@@ -1,5 +1,15 @@
 # Changelog
 
+## 2026-06-04 — Slice 2: GSC Ingestion + Finding Normalization [COMPLETE]
+- Created `packages/gsc-connector` — zero-dependency GSC REST client (JWT auth, search analytics, URL inspection, sitemap list)
+- Added `normalizeSearchAnalytics()` — 6 finding types: low_ctr_opportunity, near_top_miss, page_two_trap, click_collapse, serp_ghost
+- Added `normalizeUrlInspection()` — flags indexing_loss (CRITICAL), discovered_not_indexed (HIGH), duplicate_canonical (MEDIUM)
+- Added `deduplicateFindings()` — keeps highest severity per issueType + query key
+- Wired `handleIngestGSC` worker handler — fetches 30-day current + 30-day prior for comparison
+- Added `POST /api/projects/:projectId/ingest-gsc` API trigger → Cloud Tasks queue
+- Added `.env.example` with all service env vars
+- **Smoke test: 8/8 packages build passing (types → db → policies → gsc-connector → github-connector → api → web → worker)**
+
 ## 2026-05-28 — Slice 0: Monorepo Scaffold + Database Schema [COMPLETE]
 - Created repo https://github.com/iamfarzad/ai-visibility
 - Scaffoled monorepo: apps/web, apps/api, apps/worker, packages/{db,types,policies}
