@@ -1,7 +1,0 @@
-{
-  "installCommand": "pnpm install --no-frozen-lockfile",
-  "buildCommand": "pnpm --filter @ai-visibility/web run build",
-  "outputDirectory": "apps/web/out",
-  "framework": "nextjs",
-  "rootDirectory": "apps/web"
-}
